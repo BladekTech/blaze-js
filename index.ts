@@ -6,7 +6,7 @@ const CMD_PING: string = "ping\n",
 	CMD_DELETE: string = "delete\n",
 	CMD_CLEAR: string = "clear\n",
 	CMD_UPDATE: string = "update\n",
-	CMD_EXISTS: string = "exists\n";
+	CMD_EXISTS: string = "exists\n"; // this doesn't work???
 
 export const DEFAULT_PORT: number = 7854;
 
@@ -29,6 +29,7 @@ export class Client {
 			);
 			client.on("data", (data) => {
 				recieved += data.toString();
+				recieved = recieved.replaceAll("\u0000", "").trim();
 				client.end();
 				resolve(recieved);
 			});
@@ -64,7 +65,7 @@ export class Client {
 		await this.do(CMD_UPDATE, key, value);
 	}
 
-	async exists(key: string): Promise<boolean> {
-		return (await this.do(CMD_EXISTS, key)) == "+y";
+	async exists(key: string): Promise<any> {
+		return (await this.do(CMD_EXISTS, key)).startsWith("+y");
 	}
 }
